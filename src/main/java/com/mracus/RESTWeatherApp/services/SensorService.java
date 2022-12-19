@@ -16,6 +16,7 @@ public class SensorService {
         this.sensorRepository = sensorRepository;
     }
 
+    @Transactional
     public void save(Sensor sensor) {
         sensorRepository.save(sensor);
     }

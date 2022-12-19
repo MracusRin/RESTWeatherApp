@@ -29,7 +29,8 @@ public class Measurement {
     @JoinColumn(name = "sensor_id", referencedColumnName = "sensor_id")
     private Sensor sensor;
 
-    public Measurement() {}
+    public Measurement() {
+    }
 
     public Measurement(Sensor sensor, float value, boolean reining, LocalDateTime createdAt) {
         this.sensor = sensor;

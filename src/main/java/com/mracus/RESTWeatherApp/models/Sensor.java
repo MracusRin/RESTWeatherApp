@@ -2,6 +2,7 @@ package com.mracus.RESTWeatherApp.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "sensor")
@@ -13,6 +14,7 @@ public class Sensor {
 
     @Column(name = "name")
     @NotEmpty(message = "Sensor name should not be empty")
+    @Size(min = 3, max = 30, message = "Name should by between 3 and 30 characters")
     private String name;
 
     @OneToOne(mappedBy = "sensor", cascade = CascadeType.PERSIST)

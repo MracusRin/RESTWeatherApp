@@ -5,6 +5,7 @@ import com.mracus.RESTWeatherApp.models.Sensor;
 import com.mracus.RESTWeatherApp.services.SensorService;
 import com.mracus.RESTWeatherApp.util.SensorErrorResponse;
 import com.mracus.RESTWeatherApp.util.SensorNotCreatedException;
+import com.mracus.RESTWeatherApp.util.SensorValidator;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,16 +26,21 @@ import java.util.List;
 public class SensorController {
     private final SensorService sensorService;
     private final ModelMapper modelMapper;
+    private final SensorValidator sensorValidator;
+
 
     @Autowired
-    public SensorController(SensorService sensorService, ModelMapper modelMapper) {
+    public SensorController(SensorService sensorService, ModelMapper modelMapper, SensorValidator sensorValidator) {
         this.sensorService = sensorService;
         this.modelMapper = modelMapper;
+
+        this.sensorValidator = sensorValidator;
     }
 
     @PostMapping("/registration")
     public ResponseEntity<HttpStatus> registration(@RequestBody @Valid SensorDTO sensorDTO,
                                                    BindingResult bindingResult) {
+        sensorValidator.validate(convertToSensor(sensorDTO), bindingResult);
         if (bindingResult.hasErrors()) {
             StringBuilder errorMsg = new StringBuilder();
             List<FieldError> errorList = bindingResult.getFieldErrors();

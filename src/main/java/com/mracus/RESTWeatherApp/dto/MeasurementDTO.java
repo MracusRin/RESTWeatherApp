@@ -1,38 +1,40 @@
 package com.mracus.RESTWeatherApp.dto;
 
 import com.mracus.RESTWeatherApp.models.Sensor;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 
 public class MeasurementDTO {
-    @Size(min = -100, max = 100, message = "Value should be between -100 and 100")
-    private float value;
+    @Min(value = -100, message = "Value should not be lower -100")
+    @Max(value = 100, message = "Value should not be upper 100")
+    @NotNull(message = "Value should not by empty")
+    private Float value;
 
-    @NotEmpty(message = "Raining should not be empty")
-    private boolean reining;
+    @NotNull(message = "Raining should not be empty")
+    private Boolean raining;
 
+    @NotNull(message = "Sensor should not be empty")
     private Sensor sensor;
 
-    public MeasurementDTO(float value, boolean reining, Sensor sensor) {
+    public MeasurementDTO(Float value, boolean raining, Sensor sensor) {
         this.value = value;
-        this.reining = reining;
+        this.raining = raining;
         this.sensor = sensor;
     }
 
-    public float getValue() {
+    public Float getValue() {
         return value;
     }
 
-    public void setValue(float value) {
+    public void setValue(Float value) {
         this.value = value;
     }
 
-    public boolean isReining() {
-        return reining;
+    public Boolean isReining() {
+        return raining;
     }
 
-    public void setReining(boolean reining) {
-        this.reining = reining;
+    public void setReining(Boolean reining) {
+        this.raining = reining;
     }
 
     public Sensor getSensor() {

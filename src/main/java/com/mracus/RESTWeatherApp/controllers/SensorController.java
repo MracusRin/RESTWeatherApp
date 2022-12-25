@@ -3,7 +3,7 @@ package com.mracus.RESTWeatherApp.controllers;
 import com.mracus.RESTWeatherApp.dto.SensorDTO;
 import com.mracus.RESTWeatherApp.models.Sensor;
 import com.mracus.RESTWeatherApp.services.SensorService;
-import com.mracus.RESTWeatherApp.util.SensorErrorResponse;
+import com.mracus.RESTWeatherApp.util.ErrorResponse;
 import com.mracus.RESTWeatherApp.util.SensorNotCreatedException;
 import com.mracus.RESTWeatherApp.util.SensorValidator;
 import jakarta.validation.Valid;
@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Controller
@@ -33,7 +34,6 @@ public class SensorController {
     public SensorController(SensorService sensorService, ModelMapper modelMapper, SensorValidator sensorValidator) {
         this.sensorService = sensorService;
         this.modelMapper = modelMapper;
-
         this.sensorValidator = sensorValidator;
     }
 
@@ -63,10 +63,10 @@ public class SensorController {
     }
 
     @ExceptionHandler
-    private ResponseEntity<SensorErrorResponse> handleException(SensorNotCreatedException exception) {
-        SensorErrorResponse response = new SensorErrorResponse(
+    private ResponseEntity<ErrorResponse> handleException(SensorNotCreatedException exception) {
+        ErrorResponse response = new ErrorResponse(
                 exception.getMessage(),
-                System.currentTimeMillis()
+                LocalDateTime.now()
         );
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }

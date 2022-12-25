@@ -1,10 +1,12 @@
 package com.mracus.RESTWeatherApp.util;
 
-public class SensorErrorResponse {
-    private String message;
-    private Long time;
+import java.time.LocalDateTime;
 
-    public SensorErrorResponse(String message, Long time) {
+public class ErrorResponse {
+    private String message;
+    private LocalDateTime time;
+
+    public ErrorResponse(String message, LocalDateTime time) {
         this.message = message;
         this.time = time;
     }
@@ -17,11 +19,11 @@ public class SensorErrorResponse {
         this.message = message;
     }
 
-    public Long getTime() {
+    public LocalDateTime getTime() {
         return time;
     }
 
-    public void setTime(Long time) {
+    public void setTime(LocalDateTime time) {
         this.time = time;
     }
 }

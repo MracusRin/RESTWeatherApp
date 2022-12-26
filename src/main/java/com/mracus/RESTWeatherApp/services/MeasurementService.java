@@ -29,12 +29,16 @@ public class MeasurementService {
     @Transactional
     public void save(Measurement measurement) {
         enrich(measurement);
-        Sensor sensor = sensorService.findByName(measurement.getSensor().getName()).get();
-        measurement.setSensor(sensor);
         measurementRepository.save(measurement);
     }
 
+    public Integer showRainyDaysCount() {
+        return measurementRepository.showRainyDays();
+    }
+
     private void enrich(Measurement measurement) {
+        Sensor sensor = sensorService.findByName(measurement.getSensor().getName()).get();
+        measurement.setSensor(sensor);
         measurement.setCreatedAt(LocalDateTime.now());
     }
 }

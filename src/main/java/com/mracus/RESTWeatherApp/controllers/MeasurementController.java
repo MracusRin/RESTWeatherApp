@@ -63,6 +63,11 @@ public class MeasurementController {
         return measurementService.findAll().stream().map(this::convertToMeasurementDTO).toList();
     }
 
+    @GetMapping("/rainyDaysCount")
+    public Integer getRainyDaysCount() {
+        return measurementService.showRainyDaysCount();
+    }
+
     @ExceptionHandler
     private ResponseEntity<ErrorResponse> handleException(SensorNotFoundException exception) {
         ErrorResponse response = new ErrorResponse(

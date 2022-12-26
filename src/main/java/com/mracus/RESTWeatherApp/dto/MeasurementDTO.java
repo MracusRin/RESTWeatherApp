@@ -1,5 +1,6 @@
 package com.mracus.RESTWeatherApp.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -10,7 +11,8 @@ public class MeasurementDTO {
     @NotNull(message = "Value should not by empty")
     private Float value;
 
-    @NotNull(message = "Raining should not be empty")
+    @JsonProperty("raining")
+    @NotNull(message = "1Raining should not be empty")
     private boolean raining;
 
     @NotNull(message = "Sensor should not be empty")

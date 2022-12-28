@@ -57,12 +57,12 @@ public class Measurement {
         this.value = value;
     }
 
-    public boolean isReining() {
+    public boolean isRaining() {
         return raining;
     }
 
-    public void setReining(boolean reining) {
-        this.raining = reining;
+    public void setRaining(boolean raining) {
+        this.raining = raining;
     }
 
     public LocalDateTime getCreatedAt() {

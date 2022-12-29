@@ -1,6 +1,7 @@
 package com.mracus.RESTWeatherApp.controllers;
 
 import com.mracus.RESTWeatherApp.dto.MeasurementDTO;
+import com.mracus.RESTWeatherApp.dto.MeasurementsResponseDTO;
 import com.mracus.RESTWeatherApp.models.Measurement;
 import com.mracus.RESTWeatherApp.services.MeasurementService;
 import com.mracus.RESTWeatherApp.services.SensorService;
@@ -59,8 +60,15 @@ public class MeasurementController {
     }
 
     @GetMapping()
-    public List<MeasurementDTO> getMeasurements() {
-        return measurementService.findAll().stream().map(this::convertToMeasurementDTO).toList();
+    public MeasurementsResponseDTO getMeasurements() {
+        MeasurementsResponseDTO measurementsResponseDTO = new MeasurementsResponseDTO();
+        List<MeasurementDTO> measurementList = measurementService
+                .findAll()
+                .stream()
+                .map(this::convertToMeasurementDTO)
+                .toList();
+        measurementsResponseDTO.setMeasurements(measurementList);
+        return measurementsResponseDTO;
     }
 
     @GetMapping("/rainyDaysCount")

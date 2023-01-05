@@ -13,7 +13,7 @@ public class MeasurementDTO {
 
     @JsonProperty("raining")
     @NotNull(message = "Raining should not be empty")
-    private boolean raining;
+    private Boolean raining;
 
     @NotNull(message = "Sensor should not be empty")
     private SensorDTO sensor;
@@ -26,11 +26,11 @@ public class MeasurementDTO {
         this.value = value;
     }
 
-    public boolean isRaining() {
+    public Boolean isRaining() {
         return raining;
     }
 
-    public void setRaining(boolean raining) {
+    public void setRaining(Boolean raining) {
         this.raining = raining;
     }
 

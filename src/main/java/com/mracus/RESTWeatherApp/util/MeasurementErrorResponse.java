@@ -2,11 +2,11 @@ package com.mracus.RESTWeatherApp.util;
 
 import java.time.LocalDateTime;
 
-public class ErrorResponse {
+public class MeasurementErrorResponse {
     private String message;
     private LocalDateTime time;
 
-    public ErrorResponse(String message, LocalDateTime time) {
+    public MeasurementErrorResponse(String message, LocalDateTime time) {
         this.message = message;
         this.time = time;
     }

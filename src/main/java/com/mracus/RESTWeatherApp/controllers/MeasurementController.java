@@ -1,74 +1,65 @@
 package com.mracus.RESTWeatherApp.controllers;
 
 import com.mracus.RESTWeatherApp.dto.MeasurementDTO;
-import com.mracus.RESTWeatherApp.dto.MeasurementsResponseDTO;
+import com.mracus.RESTWeatherApp.dto.MeasurementsResponse;
 import com.mracus.RESTWeatherApp.models.Measurement;
 import com.mracus.RESTWeatherApp.services.MeasurementService;
-import com.mracus.RESTWeatherApp.services.SensorService;
-import com.mracus.RESTWeatherApp.util.ErrorResponse;
-import com.mracus.RESTWeatherApp.util.MeasurementNotCreatedException;
-import com.mracus.RESTWeatherApp.util.SensorNotFoundException;
+import com.mracus.RESTWeatherApp.util.MeasurementErrorResponse;
+import com.mracus.RESTWeatherApp.util.MeasurementException;
+import com.mracus.RESTWeatherApp.util.MeasurementValidator;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
+import static com.mracus.RESTWeatherApp.util.ErrorUtil.returnErrorsToClient;
 
 @RestController
 @RequestMapping("/measurements")
 public class MeasurementController {
     private final MeasurementService measurementService;
     private final ModelMapper modelMapper;
-    private final SensorService sensorService;
+    private final MeasurementValidator measurementValidator;
 
     @Autowired
-    public MeasurementController(MeasurementService measurementService,
-                                 ModelMapper modelMapper,
-                                 SensorService sensorService) {
+    public MeasurementController(MeasurementService measurementService, ModelMapper modelMapper,
+                                 MeasurementValidator measurementValidator) {
         this.measurementService = measurementService;
         this.modelMapper = modelMapper;
-        this.sensorService = sensorService;
+        this.measurementValidator = measurementValidator;
     }
 
     @PostMapping("/add")
     public ResponseEntity<HttpStatus> add(@RequestBody @Valid MeasurementDTO measurementDTO,
                                           BindingResult bindingResult) {
+        Measurement measurementToAdd = convertToMeasurement(measurementDTO);
+        measurementValidator.validate(measurementToAdd, bindingResult);
+
         if (bindingResult.hasErrors()) {
-            StringBuilder errorMsg = new StringBuilder();
-            List<FieldError> errors = bindingResult.getFieldErrors();
-
-            for (FieldError error : errors) {
-                errorMsg.append(error.getField())
-                        .append(" - ")
-                        .append(error.getDefaultMessage())
-                        .append("; ");
-            }
-            throw new MeasurementNotCreatedException(errorMsg.toString());
-        }
-        if (sensorService.findByName(measurementDTO.getSensor().getName()).isEmpty()) {
-            throw new SensorNotFoundException();
+            returnErrorsToClient(bindingResult);
         }
 
-        measurementService.save(convertToMeasurement(measurementDTO));
+        measurementService.save(measurementToAdd);
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
     @GetMapping()
-    public MeasurementsResponseDTO getMeasurements() {
-        MeasurementsResponseDTO measurementsResponseDTO = new MeasurementsResponseDTO();
+    public MeasurementsResponse getMeasurements() {
+        MeasurementsResponse measurementsResponse = new MeasurementsResponse();
         List<MeasurementDTO> measurementList = measurementService
                 .findAll()
                 .stream()
                 .map(this::convertToMeasurementDTO)
                 .toList();
-        measurementsResponseDTO.setMeasurements(measurementList);
-        return measurementsResponseDTO;
+
+        measurementsResponse.setMeasurements(measurementList);
+        return measurementsResponse;
     }
 
     @GetMapping("/rainyDaysCount")
@@ -77,17 +68,8 @@ public class MeasurementController {
     }
 
     @ExceptionHandler
-    private ResponseEntity<ErrorResponse> handleException(SensorNotFoundException exception) {
-        ErrorResponse response = new ErrorResponse(
-                "Sensor not found",
-                LocalDateTime.now()
-        );
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler
-    private ResponseEntity<ErrorResponse> handleException(MeasurementNotCreatedException exception) {
-        ErrorResponse response = new ErrorResponse(
+    private ResponseEntity<MeasurementErrorResponse> handleException(MeasurementException exception) {
+        MeasurementErrorResponse response = new MeasurementErrorResponse(
                 exception.getMessage(),
                 LocalDateTime.now()
         );

@@ -3,8 +3,8 @@ package com.mracus.RESTWeatherApp.controllers;
 import com.mracus.RESTWeatherApp.dto.SensorDTO;
 import com.mracus.RESTWeatherApp.models.Sensor;
 import com.mracus.RESTWeatherApp.services.SensorService;
-import com.mracus.RESTWeatherApp.util.ErrorResponse;
-import com.mracus.RESTWeatherApp.util.SensorNotCreatedException;
+import com.mracus.RESTWeatherApp.util.MeasurementErrorResponse;
+import com.mracus.RESTWeatherApp.util.MeasurementException;
 import com.mracus.RESTWeatherApp.util.SensorValidator;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
@@ -12,11 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
+
+import static com.mracus.RESTWeatherApp.util.ErrorUtil.returnErrorsToClient;
 
 @RestController
 @RequestMapping("/sensor")
@@ -36,20 +36,14 @@ public class SensorController {
     @PostMapping("/registration")
     public ResponseEntity<HttpStatus> registration(@RequestBody @Valid SensorDTO sensorDTO,
                                                    BindingResult bindingResult) {
-        sensorValidator.validate(convertToSensor(sensorDTO), bindingResult);
-        if (bindingResult.hasErrors()) {
-            StringBuilder errorMsg = new StringBuilder();
-            List<FieldError> errorList = bindingResult.getFieldErrors();
+        Sensor sensorToAdd = convertToSensor(sensorDTO);
+        sensorValidator.validate(sensorToAdd, bindingResult);
 
-            for (FieldError error : errorList) {
-                errorMsg.append(error.getField())
-                        .append(" - ")
-                        .append(error.getDefaultMessage())
-                        .append("; ");
-            }
-            throw new SensorNotCreatedException(errorMsg.toString());
+        if (bindingResult.hasErrors()) {
+            returnErrorsToClient(bindingResult);
         }
-        sensorService.save(convertToSensor(sensorDTO));
+
+        sensorService.save(sensorToAdd);
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
@@ -59,8 +53,8 @@ public class SensorController {
     }
 
     @ExceptionHandler
-    private ResponseEntity<ErrorResponse> handleException(SensorNotCreatedException exception) {
-        ErrorResponse response = new ErrorResponse(
+    private ResponseEntity<MeasurementErrorResponse> handleException(MeasurementException exception) {
+        MeasurementErrorResponse response = new MeasurementErrorResponse(
                 exception.getMessage(),
                 LocalDateTime.now()
         );

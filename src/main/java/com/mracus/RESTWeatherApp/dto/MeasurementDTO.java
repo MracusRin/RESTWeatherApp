@@ -9,7 +9,7 @@ public class MeasurementDTO {
     @Min(value = -100, message = "Value should not be lower -100")
     @Max(value = 100, message = "Value should not be upper 100")
     @NotNull(message = "Value should not by empty")
-    private Float value;
+    private Double value;
 
     @JsonProperty("raining")
     @NotNull(message = "Raining should not be empty")
@@ -18,11 +18,11 @@ public class MeasurementDTO {
     @NotNull(message = "Sensor should not be empty")
     private SensorDTO sensor;
 
-    public Float getValue() {
+    public Double getValue() {
         return value;
     }
 
-    public void setValue(Float value) {
+    public void setValue(Double value) {
         this.value = value;
     }
 

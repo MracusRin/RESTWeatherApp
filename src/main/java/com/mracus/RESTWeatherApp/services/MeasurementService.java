@@ -32,10 +32,6 @@ public class MeasurementService {
         measurementRepository.save(measurement);
     }
 
-    public Integer showRainyDaysCount() {
-        return measurementRepository.showRainyDays();
-    }
-
     private void enrich(Measurement measurement) {
         Sensor sensor = sensorService.findByName(measurement.getSensor().getName()).get();
         measurement.setSensor(sensor);

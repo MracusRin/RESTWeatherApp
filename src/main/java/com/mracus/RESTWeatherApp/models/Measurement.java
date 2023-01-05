@@ -17,7 +17,7 @@ public class Measurement {
     @Min(value = -100, message = "Value should not be lower -100")
     @Max(value = 100, message = "Value should not be upper 100")
     @NotNull(message = "Value should not be empty")
-    private Float value;
+    private Double value;
 
     @Column(name = "raining")
     @NotNull(message = "Raining should not be empty")
@@ -34,7 +34,7 @@ public class Measurement {
     public Measurement() {
     }
 
-    public Measurement(Sensor sensor, Float value, boolean raining, LocalDateTime createdAt) {
+    public Measurement(Sensor sensor, Double value, boolean raining, LocalDateTime createdAt) {
         this.sensor = sensor;
         this.value = value;
         this.raining = raining;
@@ -49,11 +49,11 @@ public class Measurement {
         this.sensor = sensor;
     }
 
-    public Float getValue() {
+    public Double getValue() {
         return value;
     }
 
-    public void setValue(Float value) {
+    public void setValue(Double value) {
         this.value = value;
     }
 
